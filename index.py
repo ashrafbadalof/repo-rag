@@ -17,7 +17,7 @@ def should_index(path):
     return True
 
 files_to_index = [i for i in files if should_index(i)]
-# print(len(files_to_index)) --> 708
+# print(len(files_to_index)) --> 750
 
 def rel_path(path):
     return path.relative_to(CLONE_ROOT).as_posix()
@@ -32,3 +32,34 @@ for q in questions:
         if path not in indexed:
             missing.append((q["id"], path))
 # print(f"{len(questions)} questions, {len(missing)} missing paths") --> 20 questions, 0 missing paths
+
+CHUNK_SIZE = 1000
+CHUNK_OVERLAP = 150
+def chunk(disk_path):
+    text = disk_path.read_text(encoding='utf-8', errors='replace')
+    meta_path = rel_path(disk_path)
+
+    chunks = []
+    start = 0
+    while start < len(text):
+        end = start + CHUNK_SIZE
+        body = text[start:end]
+
+        start_line = text.count('\n', 0, start) + 1
+        end_line = start_line + body.count('\n')
+
+        chunks.append({
+            'text': body,
+            'path': meta_path,
+            'start_line': start_line,
+            'end_line': end_line
+        })
+
+        start += CHUNK_SIZE - CHUNK_OVERLAP
+    return chunks
+
+all_chunks = []
+for f in files_to_index:
+    all_chunks.extend(chunk(f))
+
+print(len(all_chunks)) # 7325 chunks
