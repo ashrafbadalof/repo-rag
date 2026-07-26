@@ -1,0 +1,105 @@
+- id: password-check
+  question: "Where does Django check if a password is correct?"
+  primary: ["django/contrib/auth/hashers.py"]
+  acceptable: ["django/contrib/auth/base_user.py"]
+
+- id: timezone-current
+  question: "Which timezone does Django use when displaying datetimes?"
+  primary: ["django/utils/timezone.py"]
+  acceptable: ["django/db/backends/base/base.py"]
+
+- id: email-send
+  question: "Where does Django actually send an email message?"
+  primary: ["django/core/mail/backends/smtp.py"]
+  acceptable: ["django/core/mail/backends/base.py"]
+
+- id: slugify
+  question: "How does Django convert a title into a URL-safe slug?"
+  primary: ["django/utils/text.py"]
+  acceptable: []
+
+- id: url-resolution
+  question: "How does Django decide which code handles an incoming URL like /articles/2024/?"
+  primary: ["django/urls/resolvers.py"]
+  acceptable: ["django/urls/base.py"]
+
+- id: html-escape
+  question: "Where does Django escape HTML so user input can't inject scripts into a page?"
+  primary: ["django/utils/html.py"]
+  acceptable: []
+
+- id: date-format
+  question: "Where does Django format a date for display, like '25 July 2026'?"
+  primary: ["django/utils/dateformat.py"]
+  acceptable: ["django/utils/formats.py"]
+
+- id: email-validate
+  question: "Where does Django check that a string is a valid email address?"
+  primary: ["django/core/validators.py"]
+  acceptable: []
+  notes: >
+    EmailValidator.__call__ does it inline; validate_email instance at module level.
+    Same file holds most other validators — expect sibling-confusion like the mail backends.
+
+- id: random-token
+  question: "Where does Django generate a random secret or token?"
+  primary: ["django/utils/crypto.py"]
+  acceptable: []
+  notes: >
+    get_random_string uses stdlib secrets.choice. salted_hmac and constant_time_compare
+    live in the same file, so the path is stable for most crypto questions.
+
+- id: gzip-response
+  question: "Where does Django compress a response before sending it to the browser?"
+  primary: ["django/middleware/gzip.py"]
+  acceptable: ["django/utils/text.py"]
+
+- id: settings-load
+  question: "Where does Django read your settings file and make settings available?"
+  primary: ["django/conf/__init__.py"]
+  acceptable: ["django/conf/global_settings.py"]
+
+- id: csrf-protect
+  question: "Where does Django protect against CSRF attacks?"
+  primary: ["django/middleware/csrf.py"]
+  acceptable: []
+
+- id: page-not-found
+  question: "Where does Django decide what to show when a page isn't found?"
+  primary: ["django/views/defaults.py"]
+  acceptable: []
+
+- id: json-serialize
+  question: "Where does Django serialize model objects into JSON?"
+  primary: ["django/core/serializers/json.py"]
+  acceptable: ["django/http/response.py"]
+
+- id: password-reset-token
+  question: "Where does Django create the token used in a password-reset link?"
+  primary: ["django/contrib/auth/tokens.py"]
+  acceptable: []
+
+- id: session-store
+  question: "Where does Django store a session so a user stays logged in between pages?"
+  primary: ["django/contrib/sessions/backends/db.py"]
+  acceptable: ["django/contrib/sessions/backends/base.py"]
+
+- id: cache-expiry
+  question: "Where does Django decide whether a cached value has expired?"
+  primary: ["django/core/cache/backends/locmem.py"]
+  acceptable: ["django/core/cache/backends/base.py"]
+
+- id: sql-build
+  question: "Where does Django build the SQL for a database query?"
+  primary: ["django/db/models/sql/compiler.py"]
+  acceptable: ["django/db/models/sql/query.py"]
+
+- id: template-render
+  question: "Where does Django render a template into finished HTML?"
+  primary: ["django/template/base.py"]
+  acceptable: ["django/template/loader.py"]
+
+- id: migrations-apply
+  question: "Where does Django apply migrations to a database?"
+  primary: ["django/db/migrations/executor.py"]
+  acceptable: ["django/db/migrations/migration.py"]
