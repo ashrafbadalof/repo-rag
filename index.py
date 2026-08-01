@@ -1,5 +1,8 @@
 from pathlib import Path
 import yaml
+from sentence_transformers import SentenceTransformer
+import numpy as np
+import json
 
 CLONE_ROOT = Path('django')
 PACKAGE_DIR = CLONE_ROOT / "django"
@@ -33,7 +36,7 @@ for q in questions:
             missing.append((q["id"], path))
 # print(f"{len(questions)} questions, {len(missing)} missing paths") --> 20 questions, 0 missing paths
 
-CHUNK_SIZE = 1000
+CHUNK_SIZE = 800
 CHUNK_OVERLAP = 150
 def chunk(disk_path):
     text = disk_path.read_text(encoding='utf-8', errors='replace')
@@ -63,3 +66,29 @@ for f in files_to_index:
     all_chunks.extend(chunk(f))
 
 print(len(all_chunks)) # 7325 chunks
+
+# sanity check 1
+# checking for how many chunks each file contributes; large files might over-appear in retrieval results
+
+# ff = {}
+# for f in files_to_index:
+#     x = len(chunk(f))
+#     ff[rel_path(f)] = x
+# print(sorted(ff.items(), key=lambda kv: kv[1])[-5:])
+
+# sanity check 2
+# x = 0
+# for ch in all_chunks:
+#     if len(ch['text']) < 100:
+#         x+=1
+# print(x)        -->  92 chunks are shorter than 100 characters
+
+model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+chunks = [f['text'] for f in all_chunks]
+embeddings = model.encode(chunks, show_progress_bar=True, normalize_embeddings=True)
+np.save("embeddings.npy", embeddings)
+
+with open("chunks.json", "w") as f:
+    json.dump(all_chunks, f)
+
+print(embeddings.shape)
