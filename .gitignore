@@ -1,2 +1,7 @@
 django/
-ast_chunking_draft.ipynb
+ast_chunking_draft.ipynbdjango/
+*.npy
+chunks*.json
+.env
+__pycache__/
+*.ipynb
