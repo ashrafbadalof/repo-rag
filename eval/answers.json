@@ -1,0 +1,355 @@
+[
+  {
+    "id": "password-check",
+    "question": "Where does Django check if a password is correct?",
+    "gold": [
+      "django/contrib/auth/hashers.py",
+      "django/contrib/auth/base_user.py"
+    ],
+    "answer": "Based on the retrieved code, Django checks if a password is correct in the `check_password` function located in `django/contrib/auth/handlers/modwsgi.py`. \n\nSpecifically, at line 37, the function calls:\n\n```python\nreturn auth.check_password_with_timing_attack_mitigation(user, password)\n```\n\nThis function returns `True` if the password is correct, `False` if the user exists but the password is incorrect, and `None` if the user does not exist (django/contrib/auth/handlers/modwsgi.py:23-41).\n\nHowever, the actual implementation of `auth.check_password_with_timing_attack_mitigation()` is not shown in the provided code, so the complete details of how the password verification is performed cannot be determined from the retrieved code alone.",
+    "sources": [
+      "django/contrib/auth/handlers/modwsgi.py:23-41",
+      "django/contrib/auth/tokens.py:8-129",
+      "django/contrib/auth/password_validation.py:231-268",
+      "django/contrib/auth/management/commands/changepassword.py:12-82",
+      "django/test/signals.py:215-222"
+    ],
+    "refused": false,
+    "correct": null
+  },
+  {
+    "id": "timezone-current",
+    "question": "Which timezone does Django use when displaying datetimes?",
+    "gold": [
+      "django/utils/timezone.py",
+      "django/db/backends/base/base.py"
+    ],
+    "answer": "Based on the code provided, Django uses the following logic when displaying datetimes:\n\n1. **For naive datetimes**: Django uses the default timezone obtained via `get_default_timezone()` (django/utils/dateformat.py:62)\n\n2. **For aware datetimes**: Django uses the timezone information from the datetime object itself (`obj.tzinfo`) (django/utils/dateformat.py:64)\n\nAdditionally, in the admin filters, when timezone support is enabled, Django converts the current time to the user's local timezone using `timezone.localtime(now)` (django/contrib/admin/filters.py:472)\n\nThe code also shows that `timezone.deactivate()` can be used to unset the time zone for the current thread, after which Django will use the time zone defined by `settings.TIME_ZONE` (django/utils/timezone.py:103-110).\n\nHowever, the specific implementation of `get_default_timezone()` and how `settings.TIME_ZONE` is used is not shown in the retrieved code.",
+    "sources": [
+      "django/templatetags/tz.py:1-7",
+      "django/utils/timesince.py:1-25",
+      "django/utils/timezone.py:103-110",
+      "django/utils/dateformat.py:55-195",
+      "django/contrib/admin/filters.py:464-555"
+    ],
+    "refused": false,
+    "correct": null
+  },
+  {
+    "id": "email-send",
+    "question": "Where does Django actually send an email message?",
+    "gold": [
+      "django/core/mail/backends/smtp.py",
+      "django/core/mail/backends/base.py"
+    ],
+    "answer": "Not found in the retrieved code.\n\nThe code shown contains email backend classes and utilities, but does not include the actual implementation of email sending. The retrieved code shows:\n\n- Console backend (django/core/mail/backends/console.py) - writes to console instead of sending\n- Dummy backend (django/core/mail/backends/dummy.py) - does nothing\n- File-based backend (django/core/mail/backends/filebased.py) - writes to a file\n- Base classes and message utilities (django/core/mail/__init__.py and django/core/mail/message.py)\n\nHowever, the actual SMTP or network-based email sending implementation is not included in the provided code excerpts. To find where Django actually sends emails, you would need to examine the SMTP backend implementation, which is not shown here.",
+    "sources": [
+      "django/core/mail/backends/console.py:1-8",
+      "django/core/mail/utils.py:1-22",
+      "django/core/mail/__init__.py:1-385",
+      "django/core/mail/backends/filebased.py:1-9",
+      "django/core/mail/backends/dummy.py:1-5"
+    ],
+    "refused": true,
+    "correct": null
+  },
+  {
+    "id": "slugify",
+    "question": "How does Django convert a title into a URL-safe slug?",
+    "gold": [
+      "django/utils/text.py"
+    ],
+    "answer": "Not found in the retrieved code.\n\nThe code provided does not contain an implementation of how Django converts a title into a URL-safe slug. While the code includes a function `iri_to_uri()` (django/utils/encoding.py:107-135) that converts internationalized resource identifiers to URI-safe strings, this is not the same as converting a title to a slug. There is no slug generation or title-to-slug conversion logic shown in the retrieved code.",
+    "sources": [
+      "django/utils/encoding.py:107-135",
+      "django/urls/resolvers.py:1-246",
+      "django/contrib/flatpages/views.py:48-70",
+      "django/contrib/admindocs/utils.py:64-96",
+      "django/contrib/gis/views.py:5-22"
+    ],
+    "refused": true,
+    "correct": null
+  },
+  {
+    "id": "url-resolution",
+    "question": "How does Django decide which code handles an incoming URL like /articles/2024/?",
+    "gold": [
+      "django/urls/resolvers.py",
+      "django/urls/base.py"
+    ],
+    "answer": "Not found in the retrieved code.\n\nThe code provided shows components related to URL handling (URLResolver, converters, and utilities), but it does not contain the implementation details of how Django decides which code handles an incoming URL. The `django/urls/resolvers.py` file has a docstring mentioning that \"URLResolver is the main class here. Its resolve() method takes a URL (as a string) and returns a ResolverMatch object,\" but the actual implementation of the `resolve()` method and the decision-making logic is not shown in the retrieved code.\n\nTo answer this question properly, I would need to see the full implementation of the `URLResolver.resolve()` method and related routing logic.",
+    "sources": [
+      "django/conf/urls/__init__.py:1-9",
+      "django/urls/resolvers.py:1-246",
+      "django/utils/encoding.py:107-135",
+      "django/utils/regex_helper.py:1-27",
+      "django/forms/widgets.py:448-450"
+    ],
+    "refused": true,
+    "correct": null
+  },
+  {
+    "id": "html-escape",
+    "question": "Where does Django escape HTML so user input can't inject scripts into a page?",
+    "gold": [
+      "django/utils/html.py"
+    ],
+    "answer": "Not found in the retrieved code.\n\nThe code shown includes references to HTML escaping functions like `conditional_escape` (imported in multiple files) and `mark_safe` (used to mark strings as safe), but the actual implementations of these escaping functions are not included in the retrieved code. To answer where Django escapes HTML to prevent script injection, I would need to see the implementation of `conditional_escape` and related escaping functions, which are not shown in full here.",
+    "sources": [
+      "django/utils/html.py:100-117",
+      "django/template/backends/dummy.py:1-8",
+      "django/templatetags/static.py:1-8",
+      "django/contrib/admin/templatetags/admin_filters.py:1-9",
+      "django/utils/safestring.py:1-53"
+    ],
+    "refused": true,
+    "correct": null
+  },
+  {
+    "id": "date-format",
+    "question": "Where does Django format a date for display, like '25 July 2026'?",
+    "gold": [
+      "django/utils/dateformat.py",
+      "django/utils/formats.py"
+    ],
+    "answer": "Not found in the retrieved code.\n\nThe code shows that Django has date formatting utilities in `django/utils/dateformat.py` (django/utils/dateformat.py:1-36), which uses PHP-style date formatting, and it imports date-related constants from `django/utils/dates.py` (django/utils/dates.py:1-72). However, the actual implementation of the formatting logic that would produce a display like '25 July 2026' is not shown in the provided code excerpts.",
+    "sources": [
+      "django/forms/widgets.py:672-674",
+      "django/utils/dateformat.py:1-36",
+      "django/contrib/admin/templatetags/admin_list.py:1-34",
+      "django/utils/dates.py:1-79",
+      "django/contrib/humanize/templatetags/humanize.py:1-127"
+    ],
+    "refused": true,
+    "correct": null
+  },
+  {
+    "id": "email-validate",
+    "question": "Where does Django check that a string is a valid email address?",
+    "gold": [
+      "django/core/validators.py"
+    ],
+    "answer": "Not found in the retrieved code.\n\nWhile the retrieved code shows that Django has an `EmailValidator` class referenced in `django/core/validators.py:1-376`, the actual implementation of how it validates email addresses is not shown in full. The code only contains:\n\n```python\nvalidate_email = EmailValidator()\n```\n\n(django/core/validators.py:1-376)\n\nTo see where Django actually checks that a string is a valid email address, you would need to see the full implementation of the `EmailValidator` class, which is not included in the provided code.",
+    "sources": [
+      "django/core/mail/handler.py:1-8",
+      "django/contrib/auth/management/__init__.py:246-292",
+      "django/core/validators.py:1-376",
+      "django/core/checks/mail.py:1-37",
+      "django/contrib/auth/forms.py:387-488"
+    ],
+    "refused": true,
+    "correct": null
+  },
+  {
+    "id": "random-token",
+    "question": "Where does Django generate a random secret or token?",
+    "gold": [
+      "django/utils/crypto.py"
+    ],
+    "answer": "Based on the retrieved code, Django generates random secrets/tokens in the following places:\n\n1. **`django/core/management/utils.py`** - The `get_random_secret_key` function is imported in the startproject command (django/core/management/commands/startproject.py:3), which is used to generate random secret keys for new projects.\n\n2. **`django/middleware/csrf.py`** - The `get_random_string` function is imported (django/middleware/csrf.py:15), which is used to generate random CSRF tokens. The code defines `CSRF_SECRET_LENGTH = 32` and `CSRF_TOKEN_LENGTH = 2 * CSRF_SECRET_LENGTH` (django/middleware/csrf.py:33-34), indicating how random CSRF secrets and tokens are sized.\n\nHowever, the actual implementations of `get_random_secret_key()` and `get_random_string()` are not shown in the provided code, so I cannot show you the specific implementation details of how the randomness is generated.",
+    "sources": [
+      "django/core/management/commands/startproject.py:1-3",
+      "django/contrib/auth/tokens.py:8-129",
+      "django/core/checks/security/base.py:1-160",
+      "django/middleware/csrf.py:1-47",
+      "django/template/base.py:1-1177"
+    ],
+    "refused": false,
+    "correct": null
+  },
+  {
+    "id": "gzip-response",
+    "question": "Where does Django compress a response before sending it to the browser?",
+    "gold": [
+      "django/middleware/gzip.py",
+      "django/utils/text.py"
+    ],
+    "answer": "Based on the retrieved code, Django compresses a response before sending it to the browser in the **GZipMiddleware** class in `django/middleware/gzip.py`.\n\nSpecifically, the compression happens in the `process_response` method (django/middleware/gzip.py:9-57). The middleware:\n\n1. Checks if the browser accepts gzip compression by examining the `HTTP_ACCEPT_ENCODING` request header (django/middleware/gzip.py:24-25)\n\n2. For streaming responses, it wraps the streaming content with compression functions:\n   - `acompress_sequence()` for async responses (django/middleware/gzip.py:27-30)\n   - `compress_sequence()` for non-async responses (django/middleware/gzip.py:31-34)\n\n3. For non-streaming responses, it compresses the content using `compress_string()` and only applies the compression if it actually reduces the size (django/middleware/gzip.py:38-45)\n\n4. Sets the appropriate `Content-Length` header after compression (django/middleware/gzip.py:46)",
+    "sources": [
+      "django/http/__init__.py:1-52",
+      "django/contrib/staticfiles/handlers.py:84-115",
+      "django/middleware/clickjacking.py:12-48",
+      "django/middleware/gzip.py:9-66",
+      "django/core/handlers/asgi.py:150-367"
+    ],
+    "refused": false,
+    "correct": "yes"
+  },
+  {
+    "id": "settings-load",
+    "question": "Where does Django read your settings file and make settings available?",
+    "gold": [
+      "django/conf/__init__.py",
+      "django/conf/global_settings.py"
+    ],
+    "answer": "Based on the code provided, Django reads your settings file and makes settings available in **django/conf/__init__.py** (path:django/conf/__init__.py:1-420).\n\nSpecifically:\n\n1. Django reads the settings module specified by the **DJANGO_SETTINGS_MODULE environment variable** (path:django/conf/__init__.py:23), as documented in the module docstring: \"Read values from the module specified by the DJANGO_SETTINGS_MODULE environment variable, and then from django.conf.global_settings\" (path:django/conf/__init__.py:2-5).\n\n2. Settings are made available through a **LazySettings object** that is instantiated as `settings = LazySettings()` (path:django/conf/__init__.py:44).\n\n3. The settings module path can also be set programmatically via the `DJANGO_SETTINGS_MODULE` environment variable, which is done in django/core/management/base.py when command-line options are processed (path:django/core/management/base.py:98).",
+    "sources": [
+      "django/conf/__init__.py:1-420",
+      "django/core/checks/compatibility/django_4_0.py:1-2",
+      "django/contrib/messages/utils.py:1-2",
+      "django/contrib/staticfiles/urls.py:1-19",
+      "django/core/management/base.py:92-101"
+    ],
+    "refused": false,
+    "correct": "yes"
+  },
+  {
+    "id": "csrf-protect",
+    "question": "Where does Django protect against CSRF attacks?",
+    "gold": [
+      "django/middleware/csrf.py"
+    ],
+    "answer": "Based on the retrieved code, Django protects against CSRF attacks in the following places:\n\n1. **Middleware**: The primary protection mechanism is `CsrfViewMiddleware` located in `django.middleware.csrf`. This middleware implements protection against request forgeries from other sites (django/middleware/csrf.py:1-5).\n\n2. **Decorators**: Django provides decorators in `django.views.decorators.csrf` that can be applied to individual views:\n   - `csrf_protect`: Adds CSRF protection on a per-view basis in the same way as the middleware (django/views/decorators/csrf.py:5-11)\n   - `requires_csrf_token`: Ensures a CSRF token is available without enforcing protection (django/views/decorators/csrf.py:13-18)\n   - `ensure_csrf_cookie`: Ensures a view sets a CSRF cookie (django/views/decorators/csrf.py:20-26)\n\n3. **Security Checks**: Django includes security checks in `django.core.checks.security.csrf` that warn developers if:\n   - The CSRF middleware is not enabled (W003 warning) (django/core/checks/security/csrf.py:5-11)\n   - The CSRF cookie is not set to secure-only (W016 warning) (django/core/checks/security/csrf.py:12-19)\n\n4. **Failure Handling**: A default CSRF failure view is provided in `django.views.csrf.csrf_failure` that handles requests that fail CSRF protection (django/views/csrf.py:22-61).",
+    "sources": [
+      "django/core/checks/security/csrf.py:1-20",
+      "django/middleware/csrf.py:1-47",
+      "django/views/csrf.py:22-81",
+      "django/views/decorators/csrf.py:1-47",
+      "django/contrib/flatpages/views.py:1-10"
+    ],
+    "refused": false,
+    "correct": "yes"
+  },
+  {
+    "id": "page-not-found",
+    "question": "Where does Django decide what to show when a page isn't found?",
+    "gold": [
+      "django/views/defaults.py"
+    ],
+    "answer": "Based on the retrieved code, Django assigns the handler for page not found (404) errors in `django/conf/urls/__init__.py:7`:\n\n```python\nhandler404 = defaults.page_not_found\n```\n\nThis shows that the `page_not_found` view from `django.views.defaults` is used to handle 404 errors. However, the actual implementation of `page_not_found` is not shown in the provided code.\n\n(django/conf/urls/__init__.py:7)",
+    "sources": [
+      "django/views/decorators/cache.py:9-27",
+      "django/middleware/cache.py:1-61",
+      "django/contrib/sites/shortcuts.py:6-18",
+      "django/contrib/flatpages/sitemaps.py:6-14",
+      "django/conf/urls/__init__.py:1-9"
+    ],
+    "refused": false,
+    "correct": null
+  },
+  {
+    "id": "json-serialize",
+    "question": "Where does Django serialize model objects into JSON?",
+    "gold": [
+      "django/core/serializers/json.py",
+      "django/http/response.py"
+    ],
+    "answer": "Based on the retrieved code, Django serializes model objects into JSON through the serializers module. The main entry point is in `django/core/serializers/__init__.py`, which defines a \"json\" serializer that points to `django.core.serializers.json` (django/core/serializers/__init__.py:20-26).\n\nHowever, the actual implementation of the JSON serializer in `django.core.serializers.json` is not shown in the provided code. The code only shows:\n\n1. The serializers interface and configuration (django/core/serializers/__init__.py:1-34)\n2. References to the JSON serializer being imported in other modules like `django/core/serializers/jsonl.py` and `django/contrib/gis/serializers/geojson.py`\n3. A `JsonResponse` class that uses `DjangoJSONEncoder` to serialize data to JSON (django/http/response.py:744-784)\n\nTo see the actual implementation of model object serialization to JSON, you would need to examine the `django/core/serializers/json.py` file, which is not included in the provided code.",
+    "sources": [
+      "django/core/serializers/__init__.py:1-34",
+      "django/contrib/gis/serializers/geojson.py:1-5",
+      "django/core/serializers/jsonl.py:1-10",
+      "django/http/response.py:744-784",
+      "django/db/models/fields/json.py:1-738"
+    ],
+    "refused": false,
+    "correct": null
+  },
+  {
+    "id": "password-reset-token",
+    "question": "Where does Django create the token used in a password-reset link?",
+    "gold": [
+      "django/contrib/auth/tokens.py"
+    ],
+    "answer": "Based on the retrieved code, Django creates the password reset token in the `make_token` method of the `PasswordResetTokenGenerator` class:\n\n```python\ndef make_token(self, user):\n    \"\"\"\n    Return a token that can be used once to do a password reset\n    for the given user.\n    \"\"\"\n    return self._make_token_with_timestamp(\n        user,\n        self._num_seconds(self._now()),\n        self.secret,\n    )\n```\n\n(django/contrib/auth/tokens.py:33-40)\n\nThe token is created by calling `_make_token_with_timestamp` with the user object, the current timestamp converted to seconds, and the secret key. However, the full implementation of `_make_token_with_timestamp` is not shown in the retrieved code, so the complete token generation logic is not visible.",
+    "sources": [
+      "django/contrib/auth/tokens.py:8-129",
+      "django/contrib/auth/views.py:1-246",
+      "django/contrib/auth/urls.py:6-36",
+      "django/contrib/auth/forms.py:1-20",
+      "django/contrib/auth/backends.py:255-342"
+    ],
+    "refused": false,
+    "correct": "yes"
+  },
+  {
+    "id": "session-store",
+    "question": "Where does Django store a session so a user stays logged in between pages?",
+    "gold": [
+      "django/contrib/sessions/backends/db.py",
+      "django/contrib/sessions/backends/base.py"
+    ],
+    "answer": "Based on the retrieved code, Django stores sessions in the **database**.\n\nThe `SessionStore` class in `django/contrib/sessions/backends/db.py:12-69` implements database session storage. It retrieves sessions from the database using the `_get_session_from_db()` method, which queries the `Session` model for a matching `session_key` with a valid (non-expired) `expire_date` (django/contrib/sessions/backends/db.py:24-31).\n\nThe `Session` model stores sessions in a database table named `\"django_session\"` (django/contrib/sessions/models.py:33).\n\nAdditionally, the code shows that Django can also store messages (related to user state) in the session using `SessionStorage`, which stores data in `request.session` (django/contrib/messages/storage/session.py:8-52).",
+    "sources": [
+      "django/contrib/sessions/models.py:8-35",
+      "django/contrib/messages/storage/session.py:8-52",
+      "django/contrib/sessions/backends/db.py:12-198",
+      "django/contrib/sessions/backends/cached_db.py:1-13",
+      "django/contrib/messages/storage/fallback.py:1-3"
+    ],
+    "refused": false,
+    "correct": "yes"
+  },
+  {
+    "id": "cache-expiry",
+    "question": "Where does Django decide whether a cached value has expired?",
+    "gold": [
+      "django/core/cache/backends/locmem.py",
+      "django/core/cache/backends/base.py"
+    ],
+    "answer": "Based on the retrieved code, Django decides whether a cached value has expired in **django/core/cache/backends/db.py** at lines 49-100.\n\nSpecifically, the expiration check occurs in the `get_many` method of the `DatabaseCache` class. The relevant logic is:\n\n```python\nif expires < tz_now():\n    expired_keys.append(key)\n```\n\n(django/core/cache/backends/db.py:49-100)\n\nThis comparison checks if the `expires` timestamp is less than the current time (`tz_now()`). If it is, the key is marked as expired and added to the `expired_keys` list for removal.\n\nAdditionally, the code in **django/core/cache/backends/locmem.py:1-14** references `_expire_info` which suggests the local memory cache backend also tracks expiration information, though the full implementation is not shown in the retrieved code.",
+    "sources": [
+      "django/middleware/cache.py:1-61",
+      "django/core/cache/backends/locmem.py:1-14",
+      "django/core/cache/__init__.py:1-67",
+      "django/core/cache/backends/memcached.py:1-12",
+      "django/core/cache/backends/db.py:49-302"
+    ],
+    "refused": false,
+    "correct": null
+  },
+  {
+    "id": "sql-build",
+    "question": "Where does Django build the SQL for a database query?",
+    "gold": [
+      "django/db/models/sql/compiler.py",
+      "django/db/models/sql/query.py"
+    ],
+    "answer": "Based on the code provided, Django builds SQL for database queries in the **`django/db/models/sql/query.py`** module.\n\nThe module's docstring explicitly states this purpose:\n\n> \"Create SQL statements for QuerySets. The code in here encapsulates all of the SQL construction so that QuerySets themselves do not have to (and could be backed by things other than SQL databases).\" (django/db/models/sql/query.py:2-6)\n\nThe main class responsible for this is the `Query` class, which is defined in this module and exported as part of the public API (django/db/models/sql/query.py:48).\n\nAdditionally, specialized query subclasses for specific operations (DeleteQuery, UpdateQuery, InsertQuery, AggregateQuery) are defined in `django/db/models/sql/subqueries.py:1-14`, which extend the base Query functionality for different types of SQL statements.",
+    "sources": [
+      "django/db/models/sql/__init__.py:1-6",
+      "django/db/models/sql/datastructures.py:1-7",
+      "django/db/models/sql/query.py:1-229",
+      "django/contrib/gis/db/backends/spatialite/client.py:1-1",
+      "django/db/models/sql/subqueries.py:1-14"
+    ],
+    "refused": false,
+    "correct": "yes"
+  },
+  {
+    "id": "template-render",
+    "question": "Where does Django render a template into finished HTML?",
+    "gold": [
+      "django/template/base.py",
+      "django/template/loader.py"
+    ],
+    "answer": "Based on the retrieved code, Django renders a template into finished HTML in the **`Template.render()` method** in `django/template/base.py`.\n\nSpecifically, the `render()` method (lines 167-176) calls `self._render(context)`, which in turn calls `self.nodelist.render(context)` (line 165). This process converts the compiled template nodelist into finished HTML output.\n\nAdditionally, the `render()` method in `django/forms/renderers.py` (lines 28-29) also performs template rendering by calling `template.render(context, request=request).strip()`.\n\n(django/template/base.py:167-176, django/forms/renderers.py:28-29)",
+    "sources": [
+      "django/core/management/templates.py:26-405",
+      "django/forms/renderers.py:17-29",
+      "django/shortcuts.py:20-28",
+      "django/template/base.py:142-292",
+      "django/contrib/admin/templatetags/log.py:1-3"
+    ],
+    "refused": false,
+    "correct": "yes"
+  },
+  {
+    "id": "migrations-apply",
+    "question": "Where does Django apply migrations to a database?",
+    "gold": [
+      "django/db/migrations/executor.py",
+      "django/db/migrations/migration.py"
+    ],
+    "answer": "Not found in the retrieved code.\n\nThe code shown includes the `migrate` command definition, migration classes, the migration loader, and the migration recorder, but it does not contain the actual implementation of where/how migrations are applied to the database. To answer this question, I would need to see the code that executes the migration operations and applies them to the database schema.",
+    "sources": [
+      "django/core/management/commands/migrate.py:18-511",
+      "django/db/migrations/migration.py:9-222",
+      "django/contrib/auth/migrations/0006_require_contenttypes_0002.py:1-1",
+      "django/db/migrations/loader.py:21-433",
+      "django/db/migrations/recorder.py:9-111"
+    ],
+    "refused": true,
+    "correct": null
+  }
+]
