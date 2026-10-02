@@ -27,7 +27,7 @@ AST chunking (one chunk per function; classes over 60 lines split per method)
 → MiniLM embeddings → top-50 dense retrieval → optional cross-encoder rerank
 → top-5 chunks → Claude Haiku with a citation-and-refusal prompt.
 
-## Results (20 questions, Django @ 957d0cee71)
+## Results (20 questions, Django)
 
 | config | recall@5 | answered | correct | wrong |
 |---|---|---|---|---|
@@ -64,7 +64,7 @@ were sometimes the only hit.
 
 File-level recall was blind to two real improvements, because a chunk containing
 only imports *from the right file* counted as a hit. At one point retrieval
-scored 15/20 while only 7/20 answers were correct. Measure the thing you ship.
+scored 15/20 while only 7/20 answers were correct.
 
 ## Limitations
 
@@ -73,7 +73,6 @@ scored 15/20 while only 7/20 answers were correct. Measure the thing you ship.
 - Gold labels are file-level, so a question with two defensible answers
   (`cache-expiry`) scores wrong for picking the other one.
 - Single-hop only; questions spanning two files are out of scope.
-- Django is pinned to a `main`-branch commit, not a release tag.
 
 ## What the evidence says to do next
 
@@ -84,10 +83,9 @@ scored 15/20 while only 7/20 answers were correct. Measure the thing you ship.
 
 So the remaining failures aren't a chunking problem:
 
-1. **Raise `k` from 5 to 10** — ten questions have their answer at rank 6–37.
-2. **Hybrid BM25 + dense (RRF)** — `slugify` ranks 230 for a question containing
+1. **Hybrid BM25 + dense (RRF)** — `slugify` ranks 230 for a question containing
    "slug"; exact identifier matching is what embeddings are worst at.
-3. **A code-trained reranker** — promoting a rank-6-to-20 chunk out of a
+2. **A code-trained reranker** — promoting a rank-6-to-20 chunk out of a
    50-candidate pool is exactly a reranker's job; the MS MARCO one can't.
 
 ## Setup
