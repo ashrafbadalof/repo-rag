@@ -11,7 +11,7 @@ K_VALUES = [1, 5, 10, 20, 50]
 with open("eval/questions.yaml", encoding="utf-8") as f:
     questions = yaml.safe_load(f)
 
-chunks, embeddings, model = load_index("ast")
+chunks, embeddings, model = load_index()
 reranker = CrossEncoder(RERANK_MODEL) if RUN_RERANK else None
 
 

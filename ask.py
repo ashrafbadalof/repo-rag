@@ -38,11 +38,18 @@ def build_context(chunks):
 
         if len(text) > MAX_CHUNK_CHARS:
             lines = text[:MAX_CHUNK_CHARS].split("\n")[:-1]
+            if not lines:
+                continue
             text = "\n".join(lines)
             end = start + len(lines) - 1
             text += "\n     # ... truncated"
 
-        blocks.append(f"--- {c['path']}:{start}-{end} ---\n{text}")
+        if c.get("synthetic"):
+            header = f"--- {c['path']}:{start} (class outline, signatures only) ---"
+        else:
+            header = f"--- {c['path']}:{start}-{end} ---"
+
+        blocks.append(f"{header}\n{text}")
 
     return "\n\n".join(blocks)
 
@@ -85,7 +92,7 @@ def main():
 
     rerank = args.rerank
 
-    chunks, embeddings, model = load_index("ast")
+    chunks, embeddings, model = load_index()
     reranker = CrossEncoder(RERANK_MODEL) if rerank else None
 
     results = search(args.question, chunks, embeddings, model,

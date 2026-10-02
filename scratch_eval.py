@@ -11,7 +11,7 @@ RERANK = "--no-rerank" not in sys.argv
 OUT = "eval/answers_rerank.json" if RERANK else "eval/answers_norerank.json"
 
 questions = yaml.safe_load(open("eval/questions.yaml", encoding="utf-8"))
-chunks, embeddings, model = load_index("ast")
+chunks, embeddings, model = load_index()
 reranker = CrossEncoder(RERANK_MODEL) if RERANK else None
 
 records = []

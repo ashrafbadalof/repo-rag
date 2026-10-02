@@ -5,8 +5,9 @@ from sentence_transformers import SentenceTransformer, CrossEncoder
 EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-def load_index(strategy="ast"):
-    suffix = "_ast" if strategy == "ast" else ""
+STRATEGY = "method"
+def load_index(strategy=STRATEGY):
+    suffix = "" if strategy == "fixed" else f"_{strategy}"
     embeddings = np.load(f"embeddings{suffix}.npy")
     with open(f"chunks{suffix}.json", encoding="utf-8") as f:
         chunks = json.load(f)
