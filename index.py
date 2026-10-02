@@ -62,6 +62,9 @@ def chunk(disk_path):
         start += CHUNK_SIZE - CHUNK_OVERLAP
     return chunks
 
+IMPORT_NODES = (ast.Import, ast.ImportFrom)
+MIN_PREAMBLE_CHARS = 120
+MAX_GAP = 2
 CHUNKABLE = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
 def node_start(node):
     """Real start line"""
@@ -70,41 +73,44 @@ def node_start(node):
     return node.lineno
 
 def chunk_file_ast(disk_path):
-    text = disk_path.read_text(encoding='utf-8', errors='replace')
+    text = disk_path.read_text(encoding="utf-8", errors="replace")
     meta_path = rel_path(disk_path)
     lines = text.splitlines()
     tree = ast.parse(text)
 
-    preamble_lines = []
     chunks = []
-    preamble_start = None
-    preamble_end = None
+    run = []
+
+    def flush():
+        if not run:
+            return
+        if all(isinstance(n, IMPORT_NODES) for n in run):
+            return                                   # import-only: drop
+        start, end = run[0].lineno, run[-1].end_lineno
+        body = "\n".join(lines[start - 1:end])
+        if len(body) < MIN_PREAMBLE_CHARS:
+            return                                   # too small to be useful
+        chunks.append({"text": body, "path": meta_path,
+                       "start_line": start, "end_line": end})
 
     for node in tree.body:
         if isinstance(node, CHUNKABLE):
+            flush()
+            run.clear()
             start = node_start(node)
-            node_lines = lines[start-1 : node.end_lineno]
-            body = "\n".join(node_lines)
             chunks.append({
-                'text': body,
-                'path': meta_path,
-                'start_line': start,
-                'end_line': node.end_lineno,
+                "text": "\n".join(lines[start - 1:node.end_lineno]),
+                "path": meta_path,
+                "start_line": start,
+                "end_line": node.end_lineno,
             })
         else:
-            preamble_lines.extend(lines[node.lineno-1 : node.end_lineno])
-            if preamble_start is None:
-                preamble_start = node.lineno
-            preamble_end = node.end_lineno
-    
-    if preamble_lines:
-        chunks.insert(0, {
-            'text': "\n".join(preamble_lines),
-            'path': meta_path,
-            'start_line': preamble_start,
-            'end_line': preamble_end,
-        })
+            if run and node.lineno - run[-1].end_lineno - 1 > MAX_GAP:
+                flush()
+                run.clear()
+            run.append(node)
 
+    flush()
     return chunks
 
 CHUNK_STRATEGY = "ast"

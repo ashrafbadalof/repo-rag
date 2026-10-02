@@ -76,12 +76,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("question")
     parser.add_argument("--k", type=int, default=5)
-    parser.add_argument("--no-rerank", action="store_true")
+    parser.add_argument("--rerank", action="store_true",
+                    help="Enable cross-encoder reranking (off by default: "
+                         "hurts precision on code, see README)")
     parser.add_argument("--verbose", action="store_true",
                         help="Print retrieved chunks before answering.")
     args = parser.parse_args()
 
-    rerank = not args.no_rerank
+    rerank = args.rerank
 
     chunks, embeddings, model = load_index("ast")
     reranker = CrossEncoder(RERANK_MODEL) if rerank else None
